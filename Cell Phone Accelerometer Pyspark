@@ -1,0 +1,218 @@
+{
+    "nbformat_minor": 1, 
+    "cells": [
+        {
+            "source": "This is the second assignment for the Coursera course \"Advanced Machine Learning and Signal Processing\"\n\nAgain, please insert to code to your ApacheCouchDB based Cloudant instance below using the \"Insert Code\" function of Watson Studio( you've done this in Assignment 1 before)\n\nDone, just execute all cells one after the other and you are done - just note that in the last one you have to update your email address (the one you've used for coursera) and obtain a submission token, you get this from the programming assignment directly on coursera.\n\nPlease fill in the sections labelled with \"###YOUR_CODE_GOES_HERE###\"", 
+            "cell_type": "markdown", 
+            "metadata": {}
+        }, 
+        {
+            "source": "#your cloudant credentials go here\n###YOUR_CODE_GOES_HERE###\"\ncredentials_1 = {\n  \"apikey\": \"bWTV4f2kji8LZGBrhw_aYXt1JkoBhEFvU515wy7tX1W2\",\n  \"host\": \"b08490db-f5e8-40dd-a15f-8392878565a6-bluemix.cloudant.com\",\n  \"iam_apikey_description\": \"Auto generated apikey during resource-key operation for Instance - crn:v1:bluemix:public:cloudantnosqldb:us-south:a/59af4aa0b6e347559248d505529c487c:8a633948-3d18-43ee-85ba-18a7ab426f2d::\",\n  \"iam_apikey_name\": \"auto-generated-apikey-b9dfd6b5-17ae-4a8f-9e12-00156ca7eff0\",\n  \"iam_role_crn\": \"crn:v1:bluemix:public:iam::::serviceRole:Manager\",\n  \"iam_serviceid_crn\": \"crn:v1:bluemix:public:iam-identity::a/59af4aa0b6e347559248d505529c487c::serviceid:ServiceId-6627e2cd-b3a4-44cb-94c2-23bf92381c40\",\n  \"password\": \"6a53df874c05b530f0a1361d77d177b69a78a9b5cf394f8d8a4bc8f66a6ad449\",\n  \"port\": 443,\n  \"url\": \"https://b08490db-f5e8-40dd-a15f-8392878565a6-bluemix:6a53df874c05b530f0a1361d77d177b69a78a9b5cf394f8d8a4bc8f66a6ad449@b08490db-f5e8-40dd-a15f-8392878565a6-bluemix.cloudant.com\",\n  \"username\": \"b08490db-f5e8-40dd-a15f-8392878565a6-bluemix\"\n}\n", 
+            "cell_type": "code", 
+            "metadata": {}, 
+            "outputs": [], 
+            "execution_count": 2
+        }, 
+        {
+            "source": "Let's create a SparkSession object and put the Cloudant credentials into it", 
+            "cell_type": "markdown", 
+            "metadata": {}
+        }, 
+        {
+            "source": "spark = SparkSession\\\n    .builder\\\n    .appName(\"Cloudant Spark SQL Example in Python using temp tables\")\\\n    .config(\"cloudant.host\",credentials_1['host'])\\\n    .config(\"cloudant.username\", credentials_1['username'])\\\n    .config(\"cloudant.password\",credentials_1['password'])\\\n    .getOrCreate()", 
+            "cell_type": "code", 
+            "metadata": {}, 
+            "outputs": [], 
+            "execution_count": 5
+        }, 
+        {
+            "source": "Now it\u2019s time to have a look at the recorded sensor data. You should see data similar to the one exemplified below\u2026.\n", 
+            "cell_type": "markdown", 
+            "metadata": {}
+        }, 
+        {
+            "source": "df=spark.read.load('shake_classification', \"org.apache.bahir.cloudant\")\n\ndf.createOrReplaceTempView(\"df\")\nspark.sql(\"SELECT * from df\").show()\n", 
+            "cell_type": "code", 
+            "metadata": {}, 
+            "outputs": [
+                {
+                    "output_type": "stream", 
+                    "name": "stdout", 
+                    "text": "+-----+--------+-----+-----+-----+--------------------+--------------------+\n|CLASS|SENSORID|    X|    Y|    Z|                 _id|                _rev|\n+-----+--------+-----+-----+-----+--------------------+--------------------+\n|    0|   moose|  0.0|  0.0|  0.0|24e8fc08842a2708b...|1-4f2ae02d09e182f...|\n|    0|   moose| 0.01| 0.01| 0.01|24e8fc08842a2708b...|1-513b4f5a3e5cb6a...|\n|    0|   moose|-0.01|-0.01|-0.01|24e8fc08842a2708b...|1-7f811774a10007f...|\n|    0|   moose|  0.0|  0.0|  0.0|24e8fc08842a2708b...|1-4f2ae02d09e182f...|\n|    0|   moose|-0.01|-0.01|-0.01|24e8fc08842a2708b...|1-7f811774a10007f...|\n|    0|   moose|  0.0|  0.0|  0.0|24e8fc08842a2708b...|1-4f2ae02d09e182f...|\n|    0|   moose|  0.0|  0.0|  0.0|24e8fc08842a2708b...|1-4f2ae02d09e182f...|\n|    0|   moose| 0.03| 0.03| 0.03|24e8fc08842a2708b...|1-3e95ed5fd4953d6...|\n|    0|   moose|-0.01|-0.01|-0.01|24e8fc08842a2708b...|1-7f811774a10007f...|\n|    0|   moose| 0.01| 0.01| 0.01|24e8fc08842a2708b...|1-513b4f5a3e5cb6a...|\n|    0|   moose| 0.01| 0.01| 0.01|24e8fc08842a2708b...|1-513b4f5a3e5cb6a...|\n|    0|   moose|  0.0|  0.0|  0.0|24e8fc08842a2708b...|1-4f2ae02d09e182f...|\n|    0|   moose| 0.01| 0.01| 0.01|24e8fc08842a2708b...|1-513b4f5a3e5cb6a...|\n|    0|   moose|  0.0|  0.0|  0.0|24e8fc08842a2708b...|1-4f2ae02d09e182f...|\n|    0|   moose|  0.0|  0.0|  0.0|24e8fc08842a2708b...|1-4f2ae02d09e182f...|\n|    0|   moose|  0.0|  0.0|  0.0|24e8fc08842a2708b...|1-4f2ae02d09e182f...|\n|    0|   moose| 0.01| 0.01| 0.01|24e8fc08842a2708b...|1-513b4f5a3e5cb6a...|\n|    0|   moose|-0.01|-0.01|-0.01|24e8fc08842a2708b...|1-7f811774a10007f...|\n|    0|   moose| 0.01| 0.01| 0.01|24e8fc08842a2708b...|1-513b4f5a3e5cb6a...|\n|    0|   moose|  0.0|  0.0|  0.0|24e8fc08842a2708b...|1-4f2ae02d09e182f...|\n+-----+--------+-----+-----+-----+--------------------+--------------------+\nonly showing top 20 rows\n\n"
+                }
+            ], 
+            "execution_count": 6
+        }, 
+        {
+            "source": "Please create a VectorAssembler which consumed columns X, Y and Z and produces a column \u201cfeatures\u201d\n", 
+            "cell_type": "markdown", 
+            "metadata": {}
+        }, 
+        {
+            "source": "from pyspark.ml.feature import VectorAssembler\nvectorAssembler = VectorAssembler(inputCols = ['X','Y','Z'], outputCol = 'features')", 
+            "cell_type": "code", 
+            "metadata": {}, 
+            "outputs": [], 
+            "execution_count": 7
+        }, 
+        {
+            "source": "Please insatiate a classifier from the SparkML package and assign it to the classifier variable. Make sure to either\n1.\tRename the \u201cCLASS\u201d column to \u201clabel\u201d or\n2.\tSpecify the label-column correctly to be \u201cCLASS\u201d\n", 
+            "cell_type": "markdown", 
+            "metadata": {}
+        }, 
+        {
+            "source": "from pyspark.ml.classification import LogisticRegression\n\nclassifier = LogisticRegression(labelCol = 'CLASS',maxIter=10, regParam=0.3, elasticNetParam=0.8)\n\n", 
+            "cell_type": "code", 
+            "metadata": {}, 
+            "outputs": [], 
+            "execution_count": 11
+        }, 
+        {
+            "source": "Let\u2019s train and evaluate\u2026\n", 
+            "cell_type": "markdown", 
+            "metadata": {}
+        }, 
+        {
+            "source": "from pyspark.ml import Pipeline\npipeline = Pipeline(stages=[vectorAssembler, classifier])", 
+            "cell_type": "code", 
+            "metadata": {}, 
+            "outputs": [], 
+            "execution_count": 18
+        }, 
+        {
+            "source": "model = pipeline.fit(df)", 
+            "cell_type": "code", 
+            "metadata": {}, 
+            "outputs": [], 
+            "execution_count": 19
+        }, 
+        {
+            "source": "prediction = model.transform(df)", 
+            "cell_type": "code", 
+            "metadata": {}, 
+            "outputs": [], 
+            "execution_count": 21
+        }, 
+        {
+            "source": "prediction.show()", 
+            "cell_type": "code", 
+            "metadata": {}, 
+            "outputs": [
+                {
+                    "output_type": "stream", 
+                    "name": "stdout", 
+                    "text": "+-----+--------+-----+-----+-----+--------------------+--------------------+-------------------+--------------------+--------------------+----------+\n|CLASS|SENSORID|    X|    Y|    Z|                 _id|                _rev|           features|       rawPrediction|         probability|prediction|\n+-----+--------+-----+-----+-----+--------------------+--------------------+-------------------+--------------------+--------------------+----------+\n|    0|   moose|  0.0|  0.0|  0.0|24e8fc08842a2708b...|1-4f2ae02d09e182f...|          (3,[],[])|[0.16880611454543...|[0.54210160055671...|       0.0|\n|    0|   moose| 0.01| 0.01| 0.01|24e8fc08842a2708b...|1-513b4f5a3e5cb6a...|   [0.01,0.01,0.01]|[0.16880611454543...|[0.54210160055671...|       0.0|\n|    0|   moose|-0.01|-0.01|-0.01|24e8fc08842a2708b...|1-7f811774a10007f...|[-0.01,-0.01,-0.01]|[0.16880611454543...|[0.54210160055671...|       0.0|\n|    0|   moose|  0.0|  0.0|  0.0|24e8fc08842a2708b...|1-4f2ae02d09e182f...|          (3,[],[])|[0.16880611454543...|[0.54210160055671...|       0.0|\n|    0|   moose|-0.01|-0.01|-0.01|24e8fc08842a2708b...|1-7f811774a10007f...|[-0.01,-0.01,-0.01]|[0.16880611454543...|[0.54210160055671...|       0.0|\n|    0|   moose|  0.0|  0.0|  0.0|24e8fc08842a2708b...|1-4f2ae02d09e182f...|          (3,[],[])|[0.16880611454543...|[0.54210160055671...|       0.0|\n|    0|   moose|  0.0|  0.0|  0.0|24e8fc08842a2708b...|1-4f2ae02d09e182f...|          (3,[],[])|[0.16880611454543...|[0.54210160055671...|       0.0|\n|    0|   moose| 0.03| 0.03| 0.03|24e8fc08842a2708b...|1-3e95ed5fd4953d6...|   [0.03,0.03,0.03]|[0.16880611454543...|[0.54210160055671...|       0.0|\n|    0|   moose|-0.01|-0.01|-0.01|24e8fc08842a2708b...|1-7f811774a10007f...|[-0.01,-0.01,-0.01]|[0.16880611454543...|[0.54210160055671...|       0.0|\n|    0|   moose| 0.01| 0.01| 0.01|24e8fc08842a2708b...|1-513b4f5a3e5cb6a...|   [0.01,0.01,0.01]|[0.16880611454543...|[0.54210160055671...|       0.0|\n|    0|   moose| 0.01| 0.01| 0.01|24e8fc08842a2708b...|1-513b4f5a3e5cb6a...|   [0.01,0.01,0.01]|[0.16880611454543...|[0.54210160055671...|       0.0|\n|    0|   moose|  0.0|  0.0|  0.0|24e8fc08842a2708b...|1-4f2ae02d09e182f...|          (3,[],[])|[0.16880611454543...|[0.54210160055671...|       0.0|\n|    0|   moose| 0.01| 0.01| 0.01|24e8fc08842a2708b...|1-513b4f5a3e5cb6a...|   [0.01,0.01,0.01]|[0.16880611454543...|[0.54210160055671...|       0.0|\n|    0|   moose|  0.0|  0.0|  0.0|24e8fc08842a2708b...|1-4f2ae02d09e182f...|          (3,[],[])|[0.16880611454543...|[0.54210160055671...|       0.0|\n|    0|   moose|  0.0|  0.0|  0.0|24e8fc08842a2708b...|1-4f2ae02d09e182f...|          (3,[],[])|[0.16880611454543...|[0.54210160055671...|       0.0|\n|    0|   moose|  0.0|  0.0|  0.0|24e8fc08842a2708b...|1-4f2ae02d09e182f...|          (3,[],[])|[0.16880611454543...|[0.54210160055671...|       0.0|\n|    0|   moose| 0.01| 0.01| 0.01|24e8fc08842a2708b...|1-513b4f5a3e5cb6a...|   [0.01,0.01,0.01]|[0.16880611454543...|[0.54210160055671...|       0.0|\n|    0|   moose|-0.01|-0.01|-0.01|24e8fc08842a2708b...|1-7f811774a10007f...|[-0.01,-0.01,-0.01]|[0.16880611454543...|[0.54210160055671...|       0.0|\n|    0|   moose| 0.01| 0.01| 0.01|24e8fc08842a2708b...|1-513b4f5a3e5cb6a...|   [0.01,0.01,0.01]|[0.16880611454543...|[0.54210160055671...|       0.0|\n|    0|   moose|  0.0|  0.0|  0.0|24e8fc08842a2708b...|1-4f2ae02d09e182f...|          (3,[],[])|[0.16880611454543...|[0.54210160055671...|       0.0|\n+-----+--------+-----+-----+-----+--------------------+--------------------+-------------------+--------------------+--------------------+----------+\nonly showing top 20 rows\n\n"
+                }
+            ], 
+            "execution_count": 22
+        }, 
+        {
+            "source": "from pyspark.ml.evaluation import MulticlassClassificationEvaluator\nbinEval = MulticlassClassificationEvaluator().setMetricName(\"accuracy\") .setPredictionCol(\"prediction\").setLabelCol(\"CLASS\")\n    \nbinEval.evaluate(prediction) ", 
+            "cell_type": "code", 
+            "metadata": {}, 
+            "outputs": [
+                {
+                    "output_type": "execute_result", 
+                    "data": {
+                        "text/plain": "0.5421016005567154"
+                    }, 
+                    "execution_count": 23, 
+                    "metadata": {}
+                }
+            ], 
+            "execution_count": 23
+        }, 
+        {
+            "source": "If you are happy with the result (I\u2019m happy with > 0.55) please submit your solution to the grader by executing the following cells, please don\u2019t forget to obtain an assignment submission token (secret) from the Courera\u2019s graders web page and paste it to the \u201csecret\u201d variable below, including your email address you\u2019ve used for Coursera. (0.55 means that you are performing better than random guesses)\n", 
+            "cell_type": "markdown", 
+            "metadata": {}
+        }, 
+        {
+            "source": "!rm -Rf a2_m2.json", 
+            "cell_type": "code", 
+            "metadata": {}, 
+            "outputs": [], 
+            "execution_count": 24
+        }, 
+        {
+            "source": "prediction = prediction.repartition(1)\nprediction.write.json('a2_m2.json')", 
+            "cell_type": "code", 
+            "metadata": {}, 
+            "outputs": [], 
+            "execution_count": 25
+        }, 
+        {
+            "source": "!rm -f rklib.py\n!wget https://raw.githubusercontent.com/romeokienzler/developerWorks/master/coursera/ai/rklib.py", 
+            "cell_type": "code", 
+            "metadata": {}, 
+            "outputs": [
+                {
+                    "output_type": "stream", 
+                    "name": "stdout", 
+                    "text": "--2018-08-29 21:00:20--  https://raw.githubusercontent.com/romeokienzler/developerWorks/master/coursera/ai/rklib.py\nResolving raw.githubusercontent.com (raw.githubusercontent.com)... 151.101.48.133\nConnecting to raw.githubusercontent.com (raw.githubusercontent.com)|151.101.48.133|:443... connected.\nHTTP request sent, awaiting response... 200 OK\nLength: 2029 (2.0K) [text/plain]\nSaving to: \u2018rklib.py\u2019\n\n100%[======================================>] 2,029       --.-K/s   in 0s      \n\n2018-08-29 21:00:20 (15.2 MB/s) - \u2018rklib.py\u2019 saved [2029/2029]\n\n"
+                }
+            ], 
+            "execution_count": 26
+        }, 
+        {
+            "source": "!zip -r a2_m2.json.zip a2_m2.json", 
+            "cell_type": "code", 
+            "metadata": {}, 
+            "outputs": [
+                {
+                    "output_type": "stream", 
+                    "name": "stdout", 
+                    "text": "  adding: a2_m2.json/ (stored 0%)\r\n  adding: a2_m2.json/_SUCCESS (stored 0%)\r\n  adding: a2_m2.json/.part-00000-2f4f7381-70eb-4485-92d7-9c15904b1c92.json.crc (stored 0%)\r\n  adding: a2_m2.json/._SUCCESS.crc (stored 0%)\r\n  adding: a2_m2.json/part-00000-2f4f7381-70eb-4485-92d7-9c15904b1c92.json (deflated 93%)\r\n"
+                }
+            ], 
+            "execution_count": 27
+        }, 
+        {
+            "source": "!base64 a2_m2.json.zip > a2_m2.json.zip.base64", 
+            "cell_type": "code", 
+            "metadata": {}, 
+            "outputs": [], 
+            "execution_count": 28
+        }, 
+        {
+            "source": "from rklib import submit\nkey = \"J3sDL2J8EeiaXhILFWw2-g\"\npart = \"G4P6f\"\nemail = 'mooseburger1@msn.com'\nsecret = 'AvyMl0zBTA45rBLl'\n\nwith open('a2_m2.json.zip.base64', 'r') as myfile:\n    data=myfile.read()\nsubmit(email, secret, key, part, [part], data)", 
+            "cell_type": "code", 
+            "metadata": {}, 
+            "outputs": [
+                {
+                    "output_type": "stream", 
+                    "name": "stdout", 
+                    "text": "Submission successful, please check on the coursera grader page for the status\n"
+                }
+            ], 
+            "execution_count": 29
+        }, 
+        {
+            "source": "", 
+            "cell_type": "code", 
+            "metadata": {}, 
+            "outputs": [], 
+            "execution_count": null
+        }
+    ], 
+    "metadata": {
+        "kernelspec": {
+            "display_name": "Python 3.5 with Spark 2.1", 
+            "name": "python3-spark21", 
+            "language": "python"
+        }, 
+        "language_info": {
+            "mimetype": "text/x-python", 
+            "nbconvert_exporter": "python", 
+            "version": "3.5.4", 
+            "name": "python", 
+            "pygments_lexer": "ipython3", 
+            "file_extension": ".py", 
+            "codemirror_mode": {
+                "version": 3, 
+                "name": "ipython"
+            }
+        }
+    }, 
+    "nbformat": 4
+}
